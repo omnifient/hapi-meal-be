@@ -34,6 +34,7 @@ const createTables = async () => {
     CREATE TABLE IF NOT EXISTS hapi_meal.collections (
       collection_id INT NOT NULL PRIMARY KEY,
       image_uri TEXT NOT NULL,
+      name TEXT NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     )
@@ -57,14 +58,14 @@ const populateTables = async () => {
 
   // initialize collection
   await pool.query(`
-    INSERT INTO hapi_meal.collections(collection_id, image_uri)
+    INSERT INTO hapi_meal.collections(collection_id, image_uri, name)
       VALUES
-        (1, 'https://gateway.pinata.cloud/ipfs/QmbUubU8AuHH6mmcQX7rCHk1BwWaLcMbdc4LShoGJjjFZq'),
-        (2, 'https://gateway.pinata.cloud/ipfs/QmcrKT88UhEJLCBugRiK9CVNQy7utK73bEuahxxUKWuP1h'),
-        (3, 'https://gateway.pinata.cloud/ipfs/QmUhm2BEAkxEnENNDQmwjVeP1HXwuoF8zLfJH5GYK5qqCn'),
-        (4, 'https://gateway.pinata.cloud/ipfs/xxxxxxxxx'),
-        (5, 'https://gateway.pinata.cloud/ipfs/QmSv7gsq9kqY74h59cTB7NB7aZfUmVTaH9jJaiqgShFLJs'),
-        (6, 'https://gateway.pinata.cloud/ipfs/QmNgVdCacUt8rkSp3k44LueckXcBfK8j6JZ2wFf6p2eBWe')
+        (1, 'https://gateway.pinata.cloud/ipfs/QmbUubU8AuHH6mmcQX7rCHk1BwWaLcMbdc4LShoGJjjFZq', 'crystal skologna'),
+        (2, 'https://gateway.pinata.cloud/ipfs/QmcrKT88UhEJLCBugRiK9CVNQy7utK73bEuahxxUKWuP1h', 'fry guy'),
+        (3, 'https://gateway.pinata.cloud/ipfs/QmUhm2BEAkxEnENNDQmwjVeP1HXwuoF8zLfJH5GYK5qqCn', 'loving clown parent'),
+        (4, 'https://gateway.pinata.cloud/ipfs/xxxxxxxxx', 'master chef'),
+        (5, 'https://gateway.pinata.cloud/ipfs/QmSv7gsq9kqY74h59cTB7NB7aZfUmVTaH9jJaiqgShFLJs', 'murderous arnold'),
+        (6, 'https://gateway.pinata.cloud/ipfs/QmNgVdCacUt8rkSp3k44LueckXcBfK8j6JZ2wFf6p2eBWe', 'nose man brime man')
       `);
 };
 
