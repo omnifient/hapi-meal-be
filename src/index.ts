@@ -4,6 +4,8 @@ import express, { Request, Response, NextFunction } from "express";
 const jwt = require("jsonwebtoken");
 import { Pool } from "pg";
 
+import { authenticateToken, createCollectiblePayload } from "./helpers";
+
 // ----------------------------------------------------------------------------
 // CONFIG
 // ----------------------------------------------------------------------------
@@ -30,7 +32,7 @@ const pool = new Pool({
 // ----------------------------------------------------------------------------
 // GLOBALS
 // ----------------------------------------------------------------------------
-const CLIENT_ID = 1;
+const LOBSTER_CLIENT_ID = 1; // NOTE: hardcoded
 
 // ----------------------------------------------------------------------------
 // HANDLERS
@@ -102,14 +104,14 @@ app.get("/collections/:collectionId", async (req, res) => {
 });
 
 // COLLECT AN ITEM OF A SPECIFIC COLLECTION
-app.post("/collections/:collectionId", async (req, res) => {
+app.post("/collections/:collectionId", authenticateToken, async (req, res) => {
+  // NOTE: requires user being authed
+
   const collectionId = req.params.collectionId;
-  // TODO: must be authed
-  const userId = 1;
+  const userId = req.user.user_id;
 
   // TODO: this should be a sql transaction
 
-  // TODO: try/catch if user doesn't exist
   let result = await pool.query(
     `SELECT owner_id FROM hapi_meal.collectibles WHERE collection_id = $1 AND owner_id = $2`,
     [collectionId, userId]
@@ -120,14 +122,24 @@ app.post("/collections/:collectionId", async (req, res) => {
     const tokenId = 1;
 
     // update db - insert row into collectibles
-    await pool.query(`INSERT INTO hapi_meal.collectibles(collection_id, token_id, owner_id) VALUES($1, $2, $3)`, [
-      collectionId,
-      tokenId,
-      userId,
-    ]);
+    result = await pool.query(
+      `INSERT INTO hapi_meal.collectibles(collection_id, token_id, owner_id) VALUES($1, $2, $3) RETURNING collectible_id`,
+      [collectionId, tokenId, userId]
+    );
+    // NOTE: this should never happen, otherwise minted NFT is not associated with the user
+    if (result.rowCount != 1) return res.status(500).send();
 
-    // TODO: returns collectible info after claiming
-    res.json({ success: "minted" });
+    // re-query db for collectible data
+    result = await pool.query(
+      `SELECT cb.collectible_id, cb.collection_id, cb.token_id, cb.owner_id, cl.image_uri, cl.name, cl.description FROM hapi_meal.collectibles cb INNER JOIN hapi_meal.collections cl ON cb.collection_id = cl.collection_id WHERE cb.owner_id = $1 AND cb.collectible_id = $2`,
+      [
+        req.user.user_id, // parse userId from auth token
+        result.rows[0].collectible_id,
+      ]
+    );
+
+    // returns collectible info after claiming
+    res.json(createCollectiblePayload(result.rows[0]));
   } else {
     // ERROR: already minted
     res.status(403).send();
@@ -135,34 +147,25 @@ app.post("/collections/:collectionId", async (req, res) => {
 });
 
 // LIST USER COLLECTIBLES
-app.get("/collectibles", async (req, res) => {
+app.get("/collectibles", authenticateToken, async (req, res) => {
   // NOTE: requires user being authed
-  const userId = 1; // TODO: parse userId from auth token
 
   // go to database, get all collectibles from the user
   let result = await pool.query(
     `SELECT cb.collectible_id, cb.collection_id, cb.token_id, cb.owner_id, cl.image_uri, cl.name, cl.description FROM hapi_meal.collectibles cb INNER JOIN hapi_meal.collections cl ON cb.collection_id = cl.collection_id WHERE cb.owner_id = $1`,
-    [userId]
+    [req.user.user_id] // parse userId from auth token
   );
 
   let userCollectibles = [];
 
   for (let i = 0; i < result.rowCount; i++) {
-    let item = result.rows[i];
-    userCollectibles.push({
-      collectibleId: item.collectible_id,
-      collectibleName: item.name,
-      collectibleDescription: item.description,
-      collectibleUri: item.image_uri,
-      collectionId: item.collection_id,
-      tokenId: item.token_id,
-    });
+    userCollectibles.push(createCollectiblePayload(result.rows[i]));
   }
 
   res.json(userCollectibles);
 });
 
-// SEND COLLECTIBLE
+// SEND COLLECTIBLE TO EMAIL
 app.put("/collectibles/:collectibleId/send/email", (req, res) => {
   // if email belongs to an existing user
   // get userId from email
@@ -173,10 +176,23 @@ app.put("/collectibles/:collectibleId/send/email", (req, res) => {
   res.json({});
 });
 
+// SEND COLLECTIBLE TO ADDRESS
+app.put("/collectibles/:collectibleId/send/address", (req, res) => {
+  const walletAddress = req.body.walletAddress;
+
+  // TODO: TBI
+
+  res.json({});
+});
+
 app.get("/", (req, res) => {
   res.send("hello, world!");
 });
 
 app.listen(port, () => {
   console.log(`HAPI MEAL BACKEND is running on port ${port}.`);
+});
+
+process.on("SIGTERM", () => {
+  pool.end();
 });
