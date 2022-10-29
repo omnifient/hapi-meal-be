@@ -48,6 +48,8 @@ app.post("/sign_up", async (req, res) => {
     password,
   ]);
 
+  // TODO: call lobster.create_account()
+
   // extract user id and create jwt
   const userId = result.rows[0].user_id;
   const token = jwt.sign({ user_id: userId }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
@@ -128,6 +130,33 @@ app.post("/collections/:collectionId", async (req, res) => {
   }
 });
 
+// LIST USER COLLECTIBLES
+app.get("/collectibles", async (req, res) => {
+  // NOTE: requires user being authed
+  const userId = 1; // TODO: parse userId from auth token
+
+  // go to database, get all collectibles from the user
+  let result = await pool.query(
+    `SELECT cb.collectible_id, cb.collection_id, cb.token_id, cb.owner_id, cl.image_uri, cl.name FROM hapi_meal.collectibles cb INNER JOIN hapi_meal.collections cl ON cb.collection_id = cl.collection_id WHERE cb.owner_id = $1`,
+    [userId]
+  );
+
+  let userCollectibles = [];
+
+  for (let i = 0; i < result.rowCount; i++) {
+    let item = result.rows[i];
+    userCollectibles.push({
+      collectibleId: item.collectible_id,
+      collectibleName: item.name,
+      collectibleUri: item.image_uri,
+      collectionId: item.collection_id,
+      tokenId: item.token_id,
+    });
+  }
+
+  res.json(userCollectibles);
+});
+
 // GET COLLECTIBLE INFO
 app.get("/colectibles/:collectibleId", (req, res) => {
   // return info for collectibleId
@@ -149,14 +178,6 @@ app.put("/collectibles/:collectibleId/send/email", (req, res) => {
   // send an email to targetEmail with qr code to redeem collectibleId
 
   res.json({});
-});
-
-// LIST COLLECTION
-app.get("/collectibles", (req, res) => {
-  // get collectibles
-  // go to database, get all collectibles from the collection
-  // collectible == {id, uri, name}
-  // if authed, collected == isCollected?
 });
 
 app.get("/", (req, res) => {
