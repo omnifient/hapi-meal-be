@@ -96,12 +96,36 @@ app.get("/collections/:collectionId", async (req, res) => {
 });
 
 // COLLECT AN ITEM OF A SPECIFIC COLLECTION
-app.post("/collections/:collectionId", (req, res) => {
+app.post("/collections/:collectionId", async (req, res) => {
+  const collectionId = req.params.collectionId;
   // TODO: must be authed
-  // if not collected by userId, then call lobster.mint(collectionId, userId)
+  const userId = 1;
 
-  // returns collectible info after claiming
-  res.json({});
+  // TODO: this should be a sql transaction
+
+  // TODO: try/catch if user doesn't exist
+  let result = await pool.query(
+    `SELECT owner_id FROM hapi_meal.collectibles WHERE collection_id = $1 AND owner_id = $2`,
+    [collectionId, userId]
+  );
+
+  if (result.rowCount == 0) {
+    // TODO: call lobster.mint(collectionId, userId) if not collected by userId
+    const tokenId = 1;
+
+    // update db - insert row into collectibles
+    await pool.query(`INSERT INTO hapi_meal.collectibles(collection_id, token_id, owner_id) VALUES($1, $2, $3)`, [
+      collectionId,
+      tokenId,
+      userId,
+    ]);
+
+    // TODO: returns collectible info after claiming
+    res.json({ success: "minted" });
+  } else {
+    // ERROR: already minted
+    res.status(403).send();
+  }
 });
 
 // GET COLLECTIBLE INFO

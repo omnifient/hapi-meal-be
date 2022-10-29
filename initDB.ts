@@ -44,7 +44,6 @@ const createTables = async () => {
     CREATE TABLE IF NOT EXISTS hapi_meal.collectibles (
       collectible_id SERIAL PRIMARY KEY,
       collection_id INT NOT NULL, --  REFERENCES hapi_meal.collections
-      image_uri TEXT NOT NULL,
       token_id INT NULL,
       owner_id INT NOT NULL REFERENCES hapi_meal.users,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
