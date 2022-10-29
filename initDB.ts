@@ -35,6 +35,7 @@ const createTables = async () => {
       collection_id INT NOT NULL PRIMARY KEY,
       image_uri TEXT NOT NULL,
       name TEXT NOT NULL,
+      description TEXT NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     )
@@ -57,14 +58,14 @@ const populateTables = async () => {
 
   // initialize collection
   await pool.query(`
-    INSERT INTO hapi_meal.collections(collection_id, image_uri, name)
+    INSERT INTO hapi_meal.collections(collection_id, image_uri, name, description)
       VALUES
-        (1, 'https://gateway.pinata.cloud/ipfs/QmbUubU8AuHH6mmcQX7rCHk1BwWaLcMbdc4LShoGJjjFZq', 'crystal skologna'),
-        (2, 'https://gateway.pinata.cloud/ipfs/QmcrKT88UhEJLCBugRiK9CVNQy7utK73bEuahxxUKWuP1h', 'fry guy'),
-        (3, 'https://gateway.pinata.cloud/ipfs/QmUhm2BEAkxEnENNDQmwjVeP1HXwuoF8zLfJH5GYK5qqCn', 'loving clown parent'),
-        (4, 'https://gateway.pinata.cloud/ipfs/xxxxxxxxx', 'master chef'),
-        (5, 'https://gateway.pinata.cloud/ipfs/QmSv7gsq9kqY74h59cTB7NB7aZfUmVTaH9jJaiqgShFLJs', 'murderous arnold'),
-        (6, 'https://gateway.pinata.cloud/ipfs/QmNgVdCacUt8rkSp3k44LueckXcBfK8j6JZ2wFf6p2eBWe', 'nose man brime man')
+        (0, 'https://gateway.pinata.cloud/ipfs/QmaG2mWs97E7FKhHC5G6VajZMaug2qnPbhgSwKHWvR6pW2/crystal_skologna.png', 'crystal skologna', ''),
+        (1, 'https://gateway.pinata.cloud/ipfs/QmaG2mWs97E7FKhHC5G6VajZMaug2qnPbhgSwKHWvR6pW2/fry_guy.png', 'fry guy', ''),
+        (2, 'https://gateway.pinata.cloud/ipfs/QmaG2mWs97E7FKhHC5G6VajZMaug2qnPbhgSwKHWvR6pW2/loving_clown_parent.png', 'loving clown parent', ''),
+        (3, 'https://gateway.pinata.cloud/ipfs/QmaG2mWs97E7FKhHC5G6VajZMaug2qnPbhgSwKHWvR6pW2/master_chef.png', 'master chef', ''),
+        (4, 'https://gateway.pinata.cloud/ipfs/QmaG2mWs97E7FKhHC5G6VajZMaug2qnPbhgSwKHWvR6pW2/murderous_arnold.jpeg', 'murderous arnold', ''),
+        (5, 'https://gateway.pinata.cloud/ipfs/QmaG2mWs97E7FKhHC5G6VajZMaug2qnPbhgSwKHWvR6pW2/nose_man_brime_man.png', 'nose man brime man', '')
       `);
 };
 

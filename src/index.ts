@@ -80,18 +80,22 @@ app.post("/sign_in", async (req, res) => {
   res.json({ auth_token: token });
 });
 
-// GET COLLECTION INFO BY ID
+// GET A COLLECTION ITEM'S INFO BY ID
 app.get("/collections/:collectionId", async (req, res) => {
   const collectionId = req.params.collectionId;
 
-  const result = await pool.query(`SELECT image_uri, name FROM hapi_meal.collections WHERE collection_id = $1`, [
-    collectionId,
-  ]);
+  const result = await pool.query(
+    `SELECT image_uri, name, description FROM hapi_meal.collections WHERE collection_id = $1`,
+    [collectionId]
+  );
 
   if (result.rowCount == 1) {
-    const imageUri = result.rows[0].image_uri;
-    const name = result.rows[0].name;
-    res.json({ collectionId: collectionId, imageUri: imageUri, name: name });
+    res.json({
+      collectionId: collectionId,
+      imageUri: result.rows[0].image_uri,
+      name: result.rows[0].name,
+      description: result.rows[0].description,
+    });
   } else {
     res.status(404).send();
   }
@@ -137,7 +141,7 @@ app.get("/collectibles", async (req, res) => {
 
   // go to database, get all collectibles from the user
   let result = await pool.query(
-    `SELECT cb.collectible_id, cb.collection_id, cb.token_id, cb.owner_id, cl.image_uri, cl.name FROM hapi_meal.collectibles cb INNER JOIN hapi_meal.collections cl ON cb.collection_id = cl.collection_id WHERE cb.owner_id = $1`,
+    `SELECT cb.collectible_id, cb.collection_id, cb.token_id, cb.owner_id, cl.image_uri, cl.name, cl.description FROM hapi_meal.collectibles cb INNER JOIN hapi_meal.collections cl ON cb.collection_id = cl.collection_id WHERE cb.owner_id = $1`,
     [userId]
   );
 
@@ -148,6 +152,7 @@ app.get("/collectibles", async (req, res) => {
     userCollectibles.push({
       collectibleId: item.collectible_id,
       collectibleName: item.name,
+      collectibleDescription: item.description,
       collectibleUri: item.image_uri,
       collectionId: item.collection_id,
       tokenId: item.token_id,
@@ -155,18 +160,6 @@ app.get("/collectibles", async (req, res) => {
   }
 
   res.json(userCollectibles);
-});
-
-// GET COLLECTIBLE INFO
-app.get("/colectibles/:collectibleId", (req, res) => {
-  // return info for collectibleId
-
-  res.json({
-    collectibleId: "123",
-    collectibleName: "blah blah",
-    collectibleUri: "uri of the image",
-    claimed: "true or false if authed/already owned by userId",
-  });
 });
 
 // SEND COLLECTIBLE
