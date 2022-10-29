@@ -166,7 +166,7 @@ app.get("/collectibles", authenticateToken, async (req, res) => {
 });
 
 // SEND COLLECTIBLE TO EMAIL
-app.put("/collectibles/:collectibleId/send/email", (req, res) => {
+app.put("/collectibles/:collectibleId/send/email", authenticateToken, async (req, res) => {
   // if email belongs to an existing user
   // get userId from email
   // transfer collectibleId to userId
@@ -177,10 +177,23 @@ app.put("/collectibles/:collectibleId/send/email", (req, res) => {
 });
 
 // SEND COLLECTIBLE TO ADDRESS
-app.put("/collectibles/:collectibleId/send/address", (req, res) => {
+app.put("/collectibles/:collectibleId/send/address", authenticateToken, async (req, res) => {
   const walletAddress = req.body.walletAddress;
 
   // TODO: TBI
+
+  res.json({});
+});
+
+// EXPORT USER's ALL COLLECTIBLES TO ANOTHER WALLET
+app.post("/export", authenticateToken, async (req, res) => {
+  const userId = req.user.user_id;
+  const walletAddress = req.body.walletAddress;
+
+  // TODO: get all collectibles for user
+  // TODO: get contract address
+
+  // TODO: call lobster.export(...)
 
   res.json({});
 });
