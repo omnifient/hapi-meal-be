@@ -78,6 +78,32 @@ app.post("/sign_in", async (req, res) => {
   res.json({ auth_token: token });
 });
 
+// GET COLLECTION INFO BY ID
+app.get("/collections/:collectionId", async (req, res) => {
+  const collectionId = req.params.collectionId;
+
+  const result = await pool.query(`SELECT image_uri, name FROM hapi_meal.collections WHERE collection_id = $1`, [
+    collectionId,
+  ]);
+
+  if (result.rowCount == 1) {
+    const imageUri = result.rows[0].image_uri;
+    const name = result.rows[0].name;
+    res.json({ collectionId: collectionId, imageUri: imageUri, name: name });
+  } else {
+    res.status(404).send();
+  }
+});
+
+// COLLECT AN ITEM OF A SPECIFIC COLLECTION
+app.post("/collections/:collectionId", (req, res) => {
+  // TODO: must be authed
+  // if not collected by userId, then call lobster.mint(collectionId, userId)
+
+  // returns collectible info after claiming
+  res.json({});
+});
+
 // GET COLLECTIBLE INFO
 app.get("/colectibles/:collectibleId", (req, res) => {
   // return info for collectibleId
@@ -88,14 +114,6 @@ app.get("/colectibles/:collectibleId", (req, res) => {
     collectibleUri: "uri of the image",
     claimed: "true or false if authed/already owned by userId",
   });
-});
-
-// COLLECT
-app.post("/collectibles/:collectibleId", (req, res) => {
-  // if not collected by userId, then call lobster.mint(collectibleId, userId)
-
-  // returns collectible info after claiming
-  res.json({});
 });
 
 // SEND COLLECTIBLE
