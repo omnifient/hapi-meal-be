@@ -1,3 +1,4 @@
+import cors from "cors";
 const crypto = require("crypto");
 import dotenv from "dotenv";
 import express, { Request, Response, NextFunction } from "express";
@@ -13,6 +14,7 @@ dotenv.config();
 
 // express stuff
 const app = express();
+app.use(cors());
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 const port = 3000;
