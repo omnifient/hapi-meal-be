@@ -74,8 +74,8 @@ curl -X PUT "https://hapi-meal-api.herokuapp.com/collectibles/1/send/email" \
 ### export assets
 
 ```bash
-curl -X PUT "https://hapi-meal-api.herokuapp.com/export" \
+curl -X POST "https://hapi-meal-api.herokuapp.com/export" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNywiaWF0IjoxNjY3MTA0NzU4LCJleHAiOjE2NjcxMDgzNTh9.UM7qQSPEG7uJFau1_R6reso0TudhXXctatD6kIMV7Lg" \
-  -d '{"toAddress": "...."}'
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTA2NzYxLCJleHAiOjE2NjcxMTAzNjF9.wI29A92kewrgjE_fVVOXNomzNVUdDnwDF9DHkRyJ_H0" \
+  -d '{"toAddress": "0xfBFC13C645BF221601f1cFb546e88432a2679631"}'
 ```
