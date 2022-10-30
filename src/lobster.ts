@@ -71,7 +71,7 @@ export async function transferCollectibleToAddress(fromUserId, toAddress, tokenI
 
   if (response.status == 200) {
     // {
-    //    txId: "0x...."",
+    //    txId: "0x....",
     // }
     return response.data;
   }
@@ -79,7 +79,21 @@ export async function transferCollectibleToAddress(fromUserId, toAddress, tokenI
   throw Error(response);
 }
 
-export async function exportAccount() {
-  // TODO: TBI
-  // POST /account/export/:clientId/:userId
+export async function exportAccount(userId, toAddress, tokensIds) {
+  const response = await axios.post(
+    process.env.LOBSTER_API_URL + "/account/export/" + process.env.LOBSTER_CLIENT_ID + "/" + userId,
+    {
+      toAddress: toAddress,
+      collectionsToId: [{ collectionAddress: process.env.LOBSTER_COLLECTION_ADDRESS, tokenIds: tokensIds }],
+    }
+  );
+
+  if (response.status == 200) {
+    // {
+    //    txsIds: ["0x....", "0x...."],
+    // }
+    return response.data;
+  }
+
+  throw Error(response);
 }

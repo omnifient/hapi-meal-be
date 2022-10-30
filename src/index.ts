@@ -6,7 +6,13 @@ const jwt = require("jsonwebtoken");
 import { Pool } from "pg";
 
 import { authenticateToken, createCollectiblePayload } from "./helpers";
-import { createUserAccount, mintCollectible, transferCollectibleToAddress, transferCollectibleToUser } from "./lobster";
+import {
+  createUserAccount,
+  exportAccount,
+  mintCollectible,
+  transferCollectibleToAddress,
+  transferCollectibleToUser,
+} from "./lobster";
 
 // ----------------------------------------------------------------------------
 // CONFIG
@@ -124,6 +130,8 @@ app.post("/collections/:collectionId", authenticateToken, async (req, res) => {
     [collectionId, userId]
   );
 
+  // TODO: missing validation for collectionId (is in hapi_meal.collections)
+
   if (result.rowCount == 0) {
     const tokenId = (await mintCollectible(userId, collectionId)).tokenId;
 
@@ -191,6 +199,11 @@ app.put("/collectibles/:collectibleId/send/email", authenticateToken, async (req
     result = await transferCollectibleToUser(fromUserId, toUserId, tokenId);
     console.log(result);
 
+    result = await pool.query(`UPDATE hapi_meal.collectibles SET owner_id = $1 WHERE collectible_id = $2`, [
+      toUserId,
+      collectibleId,
+    ]);
+
     res.status(200).send();
   } else {
     // TODO: next sprint
@@ -221,14 +234,20 @@ app.put("/collectibles/:collectibleId/send/address", authenticateToken, async (r
 // EXPORT USER's ALL COLLECTIBLES TO ANOTHER WALLET
 app.post("/export", authenticateToken, async (req, res) => {
   const userId = req.user.user_id;
-  const walletAddress = req.body.walletAddress;
+  const toAddress = req.body.toAddress;
 
-  // TODO: get all collectibles for user
-  // TODO: get contract address
+  let result = await pool.query(`SELECT tokenId FROM hapi_meal.collectibles WHERE owner_id = $1`, [userId]);
+  if (result.rowCount > 0) {
+    const tokensIds = result.rows.map((row) => {
+      return row.tokenId;
+    });
 
-  // TODO: call lobster.export(...)
-
-  res.json({});
+    result = await exportAccount(userId, toAddress, tokensIds);
+    res.json(result);
+  } else {
+    // nothing to export
+    res.status(200).send();
+  }
 });
 
 app.get("/", (req, res) => {
