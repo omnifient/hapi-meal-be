@@ -236,13 +236,23 @@ app.post("/export", authenticateToken, async (req, res) => {
   const userId = req.user.user_id;
   const toAddress = req.body.toAddress;
 
-  let result = await pool.query(`SELECT token_id FROM hapi_meal.collectibles WHERE owner_id = $1`, [userId]);
+  let result = await pool.query(`SELECT collectible_id, token_id FROM hapi_meal.collectibles WHERE owner_id = $1`, [
+    userId,
+  ]);
   if (result.rowCount > 0) {
-    const tokensIds = result.rows.map((row) => {
-      return row.token_id;
-    });
+    const tokensIds = [];
+    const collectibleIds = [];
+
+    for (let i = 0; i < result.rowCount; i++) {
+      let row = result.rows[i];
+      tokensIds.push(row.token_id);
+      collectibleIds.push(row.collectible_id);
+    }
 
     result = await exportAccount(userId, toAddress, tokensIds);
+
+    await pool.query(`DELETE FROM hapi_meal.collectibles WHERE collectible_id = ANY($1)`, [collectibleIds]);
+
     res.json(result);
   } else {
     // nothing to export

@@ -25,12 +25,12 @@ npm run initDB
 ### check the collection
 
 ```bash
-curl -v -X GET "http://localhost:3000/collections/0"
-curl -v -X GET "http://localhost:3000/collections/1"
-curl -v -X GET "http://localhost:3000/collections/2"
-curl -v -X GET "http://localhost:3000/collections/3"
-curl -v -X GET "http://localhost:3000/collections/4"
-curl -v -X GET "http://localhost:3000/collections/5"
+curl -v -X GET "http://localhost:4000/collections/0"
+curl -v -X GET "http://localhost:4000/collections/1"
+curl -v -X GET "http://localhost:4000/collections/2"
+curl -v -X GET "http://localhost:4000/collections/3"
+curl -v -X GET "http://localhost:4000/collections/4"
+curl -v -X GET "http://localhost:4000/collections/5"
 ```
 
 ### create a user
@@ -42,35 +42,35 @@ curl -X POST "https://hapi-meal-api.herokuapp.com/sign_up" -H "Content-Type: app
 ### sign in the user
 
 ```bash
-curl -X POST "https://hapi-meal-api.herokuapp.com/sign_in" -H "Content-Type: application/json" -d '{"email": "AAAAAA", "password": "aaaaaaaaaa"}'
+curl -X POST "https://hapi-meal-api.herokuapp.com/sign_in" -H "Content-Type: application/json" -d '{"email": "a1a@gmail.com", "password": "efoeoe9E"}'
 
-curl -X POST "http://localhost:4000/sign_in" -H "Content-Type: application/json" -d '{"email": "AAAAAA", "password": "aaaaaaaaaa"}'
+curl -X POST "http://localhost:4000/sign_in" -H "Content-Type: application/json" -d '{"email": "AAA@gmail.com", "password": "efoeoe9E"}'
 ```
 
 ### claim an item from the collection
 
 ```bash
-curl -X POST "https://hapi-meal-api.herokuapp.com/collections/0" -v -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTA0OTUzLCJleHAiOjE2NjcxMDg1NTN9.oR5hXML2wzImWRLqC7lPNE8tbY_IxgciexvTvGi1ycs"
-curl -X POST "http://localhost:3000/collections/1" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
-curl -X POST "http://localhost:3000/collections/2" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
-curl -X POST "http://localhost:3000/collections/3" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
-curl -X POST "http://localhost:3000/collections/4" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
-curl -X POST "http://localhost:3000/collections/5" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
+curl -X POST "https://hapi-meal-api.herokuapp.com/collections/1" -v -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNywiaWF0IjoxNjY3MTEwOTU0LCJleHAiOjE2NjcxMTQ1NTR9.7bdRIYeaKq0QrzuVfaRru0G-cLDzOQmKFBTvikoJM2o"
+curl -X POST "http://localhost:4000/collections/1" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
+curl -X POST "http://localhost:4000/collections/2" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
+curl -X POST "http://localhost:4000/collections/3" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
+curl -X POST "http://localhost:4000/collections/4" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
+curl -X POST "http://localhost:4000/collections/5" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
 ```
 
 ### list the collectibles of a user
 
 ```bash
-curl -v -X GET -H "Authorization: Bearer <jwt>" "http://localhost:3000/collectibles"
+curl -v -X GET -H "Authorization: Bearer <jwt>" "http://localhost:4000/collectibles"
 ```
 
 ### transfer to another user
 
 ```bash
-curl -X PUT "https://hapi-meal-api.herokuapp.com/collectibles/1/send/email" \
+curl -X PUT "https://hapi-meal-api.herokuapp.com/collectibles/7/send/email" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNywiaWF0IjoxNjY3MTA0NzU4LCJleHAiOjE2NjcxMDgzNTh9.UM7qQSPEG7uJFau1_R6reso0TudhXXctatD6kIMV7Lg" \
-  -d '{"toEmail": "AAAAAA"}'
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNywiaWF0IjoxNjY3MTEwOTU0LCJleHAiOjE2NjcxMTQ1NTR9.7bdRIYeaKq0QrzuVfaRru0G-cLDzOQmKFBTvikoJM2o" \
+  -d '{"toEmail": "1@gmail.com"}'
 ```
 
 ### export assets
@@ -83,6 +83,6 @@ curl -X POST "https://hapi-meal-api.herokuapp.com/export" \
 
 curl -X POST "http://localhost:4000/export" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTA3NTc2LCJleHAiOjE2NjcxMTExNzZ9.kI4s84rfuC8nvqluKqrWsckSeY9hjvPdgm3_emO9Suo" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTEyMjkzLCJleHAiOjE2NjcxMTU4OTN9.0R0UJqJTOPmGdqwtwqmipso5ynO4kEve5SRvkvbt4fQ" \
   -d '{"toAddress": "0xfBFC13C645BF221601f1cFb546e88432a2679631"}'
 ```
