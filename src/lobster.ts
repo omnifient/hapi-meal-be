@@ -38,7 +38,7 @@ export async function mintCollectible(userId, collectionId) {
 }
 
 export async function transferCollectibleToUser(fromUserId, toUserId, tokenId) {
-  const response = await axios.post(
+  const response = await axios.put(
     process.env.LOBSTER_API_URL + "/nft/collection/" + process.env.LOBSTER_COLLECTION_ID,
     {
       clientId: process.env.LOBSTER_CLIENT_ID,
@@ -59,7 +59,7 @@ export async function transferCollectibleToUser(fromUserId, toUserId, tokenId) {
 }
 
 export async function transferCollectibleToAddress(fromUserId, toAddress, tokenId) {
-  const response = await axios.post(
+  const response = await axios.put(
     process.env.LOBSTER_API_URL + "/nft/collection/" + process.env.LOBSTER_COLLECTION_ID,
     {
       clientId: process.env.LOBSTER_CLIENT_ID,
