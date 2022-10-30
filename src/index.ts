@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 import { Pool } from "pg";
 
 import { authenticateToken, createCollectiblePayload } from "./helpers";
-import { createUserAccount, mintCollectible } from "./lobster";
+import { createUserAccount, mintCollectible, transferCollectibleToAddress, transferCollectibleToUser } from "./lobster";
 
 // ----------------------------------------------------------------------------
 // CONFIG
@@ -173,22 +173,49 @@ app.get("/collectibles", authenticateToken, async (req, res) => {
 
 // SEND COLLECTIBLE TO EMAIL
 app.put("/collectibles/:collectibleId/send/email", authenticateToken, async (req, res) => {
-  // if email belongs to an existing user
-  // get userId from email
-  // transfer collectibleId to userId
-  // else
-  // send an email to targetEmail with qr code to redeem collectibleId
+  const fromUserId = req.user.user_id;
+  const toEmail = req.body.toEmail;
+  const collectibleId = req.params.collectibleId;
 
-  res.json({});
+  let result = await pool.query(
+    `SELECT token_id FROM hapi_meal.collectibles WHERE collectible_id = $1 AND owner_id = $2`,
+    [collectibleId, fromUserId]
+  );
+  if (result.rowCount != 1) return res.status(404).send();
+  const tokenId = result.rows[0].token_id;
+
+  result = await pool.query(`SELECT user_id FROM hapi_meal.users WHERE email = $1`, [toEmail]);
+  if (result.rowCount == 1) {
+    const toUserId = result.rows[0].user_id;
+
+    result = await transferCollectibleToUser(fromUserId, toUserId, tokenId);
+    console.log(result);
+
+    res.status(200).send();
+  } else {
+    // TODO: next sprint
+    // send an email to targetEmail with qr code to redeem collectibleId
+    res.status(202).send(); // TODO: TBI
+  }
 });
 
 // SEND COLLECTIBLE TO ADDRESS
 app.put("/collectibles/:collectibleId/send/address", authenticateToken, async (req, res) => {
-  const walletAddress = req.body.walletAddress;
+  const fromUserId = req.user.user_id;
+  const toAddress = req.body.toAddress;
+  const collectibleId = req.params.collectibleId;
 
-  // TODO: TBI
+  let result = await pool.query(
+    `SELECT token_id FROM hapi_meal.collectibles WHERE collectible_id = $1 AND owner_id = $2`,
+    [collectibleId, fromUserId]
+  );
+  if (result.rowCount != 1) return res.status(404).send();
+  const tokenId = result.rows[0].token_id;
 
-  res.json({});
+  result = await transferCollectibleToAddress(fromUserId, toAddress, tokenId);
+  console.log(result);
+
+  res.status(200).send();
 });
 
 // EXPORT USER's ALL COLLECTIBLES TO ANOTHER WALLET

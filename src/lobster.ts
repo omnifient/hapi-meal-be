@@ -37,9 +37,46 @@ export async function mintCollectible(userId, collectionId) {
   throw Error(response);
 }
 
-export async function transferCollectible() {
-  // TODO: TBI
-  // PUT /nft/collection/:collectionId
+export async function transferCollectibleToUser(fromUserId, toUserId, tokenId) {
+  const response = await axios.post(
+    process.env.LOBSTER_API_URL + "/nft/collection/" + process.env.LOBSTER_COLLECTION_ID,
+    {
+      clientId: process.env.LOBSTER_CLIENT_ID,
+      fromUserId: fromUserId,
+      toUserId: toUserId,
+      tokenId: tokenId,
+    }
+  );
+
+  if (response.status == 200) {
+    // {
+    //    txId: "0x...."",
+    // }
+    return response.data;
+  }
+
+  throw Error(response);
+}
+
+export async function transferCollectibleToAddress(fromUserId, toAddress, tokenId) {
+  const response = await axios.post(
+    process.env.LOBSTER_API_URL + "/nft/collection/" + process.env.LOBSTER_COLLECTION_ID,
+    {
+      clientId: process.env.LOBSTER_CLIENT_ID,
+      fromUserId: fromUserId,
+      toAddress: toAddress,
+      tokenId: tokenId,
+    }
+  );
+
+  if (response.status == 200) {
+    // {
+    //    txId: "0x...."",
+    // }
+    return response.data;
+  }
+
+  throw Error(response);
 }
 
 export async function exportAccount() {
