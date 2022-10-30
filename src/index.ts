@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 import { Pool } from "pg";
 
 import { authenticateToken, createCollectiblePayload } from "./helpers";
+import { createUserAccount } from "./lobster";
 
 // ----------------------------------------------------------------------------
 // CONFIG
@@ -40,20 +41,29 @@ app.post("/sign_up", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  // store in db, generate user id
-  // TODO: try/catch
-  const result = await pool.query(`INSERT INTO hapi_meal.users(email, password) VALUES($1, $2) RETURNING user_id`, [
-    email,
-    password,
-  ]);
+  // TODO: this should be a sql transaction
+  try {
+    // store in db, generate user id
+    const result = await pool.query(`INSERT INTO hapi_meal.users(email, password) VALUES($1, $2) RETURNING user_id`, [
+      email,
+      password,
+    ]);
+    const userId = result.rows[0].user_id;
 
-  // TODO: call lobster.create_account()
+    // create a wallet for the user with lobster
+    const userAccount = await createUserAccount(userId);
 
-  // extract user id and create jwt
-  const userId = result.rows[0].user_id;
-  const token = jwt.sign({ user_id: userId }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
+    //generate auth token with user id and wallet address
+    const token = jwt.sign({ user_id: userId, address: userAccount.address }, process.env.JWT_SECRET, {
+      expiresIn: 60 * 60,
+    });
 
-  res.json({ auth_token: token });
+    // extract user id and create wallet
+    res.json({ auth_token: token });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send();
+  }
 });
 
 // SIGN IN
