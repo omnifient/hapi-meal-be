@@ -239,7 +239,7 @@ app.post("/export", authenticateToken, async (req, res) => {
   let result = await pool.query(`SELECT token_id FROM hapi_meal.collectibles WHERE owner_id = $1`, [userId]);
   if (result.rowCount > 0) {
     const tokensIds = result.rows.map((row) => {
-      return row.tokenId;
+      return row.token_id;
     });
 
     result = await exportAccount(userId, toAddress, tokensIds);

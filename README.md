@@ -43,6 +43,8 @@ curl -X POST "https://hapi-meal-api.herokuapp.com/sign_up" -H "Content-Type: app
 
 ```bash
 curl -X POST "https://hapi-meal-api.herokuapp.com/sign_in" -H "Content-Type: application/json" -d '{"email": "AAAAAA", "password": "aaaaaaaaaa"}'
+
+curl -X POST "http://localhost:4000/sign_in" -H "Content-Type: application/json" -d '{"email": "AAAAAA", "password": "aaaaaaaaaa"}'
 ```
 
 ### claim an item from the collection
@@ -77,5 +79,10 @@ curl -X PUT "https://hapi-meal-api.herokuapp.com/collectibles/1/send/email" \
 curl -X POST "https://hapi-meal-api.herokuapp.com/export" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTA2NzYxLCJleHAiOjE2NjcxMTAzNjF9.wI29A92kewrgjE_fVVOXNomzNVUdDnwDF9DHkRyJ_H0" \
+  -d '{"toAddress": "0xfBFC13C645BF221601f1cFb546e88432a2679631"}'
+
+curl -X POST "http://localhost:4000/export" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTA3NTc2LCJleHAiOjE2NjcxMTExNzZ9.kI4s84rfuC8nvqluKqrWsckSeY9hjvPdgm3_emO9Suo" \
   -d '{"toAddress": "0xfBFC13C645BF221601f1cFb546e88432a2679631"}'
 ```
