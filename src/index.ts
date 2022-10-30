@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 import { Pool } from "pg";
 
 import { authenticateToken, createCollectiblePayload } from "./helpers";
-import { createUserAccount } from "./lobster";
+import { createUserAccount, mintCollectible } from "./lobster";
 
 // ----------------------------------------------------------------------------
 // CONFIG
@@ -82,11 +82,11 @@ app.post("/sign_in", async (req, res) => {
   if (result.rowCount == 1) {
     const userId = result.rows[0].user_id;
     token = jwt.sign({ user_id: userId }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
+    res.json({ auth_token: token });
   } else {
     // TODO: return 401
+    res.status(401).send();
   }
-
-  res.json({ auth_token: token });
 });
 
 // GET A COLLECTION ITEM'S INFO BY ID
@@ -125,8 +125,7 @@ app.post("/collections/:collectionId", authenticateToken, async (req, res) => {
   );
 
   if (result.rowCount == 0) {
-    // TODO: call lobster.mint(collectionId, userId) if not collected by userId
-    const tokenId = 1;
+    const tokenId = (await mintCollectible(userId, collectionId)).tokenId;
 
     // update db - insert row into collectibles
     result = await pool.query(

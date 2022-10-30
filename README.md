@@ -15,6 +15,7 @@ npm run server
 ```
 
 Create tables if needed:
+
 ```bash
 npm run initDB
 ```
@@ -22,6 +23,7 @@ npm run initDB
 ## cURL Examples
 
 ### check the collection
+
 ```bash
 curl -v -X GET "http://localhost:3000/collections/0"
 curl -v -X GET "http://localhost:3000/collections/1"
@@ -52,6 +54,7 @@ curl -X POST "http://localhost:3000/collections/5" -v -H "Content-Type: applicat
 ```
 
 ### list the collectibles of a user
+
 ```bash
 curl -v -X GET -H "Authorization: Bearer <jwt>" "http://localhost:3000/collectibles"
 ```
