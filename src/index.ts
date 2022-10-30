@@ -125,9 +125,13 @@ app.post("/collections/:collectionId", authenticateToken, async (req, res) => {
 
   // TODO: this should be a sql transaction
 
+  // let result = await pool.query(
+  //   `SELECT owner_id FROM hapi_meal.collectibles WHERE collection_id = $1 AND owner_id = $2`,
+  //   [collectionId, userId]
+  // );
   let result = await pool.query(
-    `SELECT owner_id FROM hapi_meal.collectibles WHERE collection_id = $1 AND owner_id = $2`,
-    [collectionId, userId]
+    `SELECT cb.collectible_id, cb.collection_id, cb.token_id, cb.owner_id, cl.image_uri, cl.name, cl.description FROM hapi_meal.collectibles cb INNER JOIN hapi_meal.collections cl ON cb.collection_id = cl.collection_id WHERE cb.owner_id = $1 AND cl.collection_id = $2`,
+    [userId, collectionId]
   );
 
   // TODO: missing validation for collectionId (is in hapi_meal.collections)
@@ -156,7 +160,7 @@ app.post("/collections/:collectionId", authenticateToken, async (req, res) => {
     res.json(createCollectiblePayload(result.rows[0]));
   } else {
     // ERROR: already minted
-    res.status(403).send();
+    res.json(createCollectiblePayload(result.rows[0]));
   }
 });
 

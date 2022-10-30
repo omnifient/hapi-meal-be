@@ -36,7 +36,9 @@ curl -v -X GET "http://localhost:4000/collections/5"
 ### create a user
 
 ```bash
-curl -X POST "https://hapi-meal-api.herokuapp.com/sign_up" -H "Content-Type: application/json" -d '{"email": "AAAAAA", "password": "aaaaaaaaaa"}'
+curl -X POST "https://hapi-meal-api.herokuapp.com/sign_up" -H "Content-Type: application/json" -d '{"email": "AAAAAA1", "password": "aaaaaaaaaa"}'
+
+curl -X POST "http://localhost:4000/sign_up" -H "Content-Type: application/json" -d '{"email": "AAAAAA", "password": "aaaaaaaaaa"}'
 ```
 
 ### sign in the user
@@ -50,12 +52,12 @@ curl -X POST "http://localhost:4000/sign_in" -H "Content-Type: application/json"
 ### claim an item from the collection
 
 ```bash
-curl -X POST "https://hapi-meal-api.herokuapp.com/collections/1" -v -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNywiaWF0IjoxNjY3MTEwOTU0LCJleHAiOjE2NjcxMTQ1NTR9.7bdRIYeaKq0QrzuVfaRru0G-cLDzOQmKFBTvikoJM2o"
+curl -X POST "https://hapi-meal-api.herokuapp.com/collections/1" -v -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1MCwiYWRkcmVzcyI6IjB4RmYwYTBDRTA1ZDlEMDE4N0EyZTIwN0VGNTE5Njc5Q2IzRjFFMTRCQiIsImlhdCI6MTY2NzExMzU1OSwiZXhwIjoxNjY3MTE3MTU5fQ.xnE8iYjYQonJqVAHXPKc6rXz_5zezSPVYqyOdK2T8j8"
 curl -X POST "http://localhost:4000/collections/1" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
 curl -X POST "http://localhost:4000/collections/2" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
 curl -X POST "http://localhost:4000/collections/3" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
 curl -X POST "http://localhost:4000/collections/4" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
-curl -X POST "http://localhost:4000/collections/5" -v -H "Content-Type: application/json" -H "Authorization: Bearer <jwt>"
+curl -X POST "http://localhost:4000/collections/5" -v -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOSwiaWF0IjoxNjY3MTE4NTg4LCJleHAiOjE2NjcxMjIxODh9.0zHoWniBhdmuVzRaiGB9UtYpD90F406HYoZpdAEw-eQ"
 ```
 
 ### list the collectibles of a user
